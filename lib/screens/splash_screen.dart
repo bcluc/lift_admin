@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lift_admin/base/assets.dart';
+import 'package:lift_admin/base/common_variables.dart';
+import 'package:lift_admin/base/singleton/user_info.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -12,6 +16,14 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Future<void> _redirect() async {
     await Future.delayed(const Duration(seconds: 2));
+    final session = UserInfo().token;
+    if (mounted) {
+      if (session != null) {
+        context.go('/browse');
+      } else {
+        context.go('/sign-in');
+      }
+    }
   }
 
   @override
@@ -24,12 +36,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black,
+      color: Colors.white,
       alignment: Alignment.center,
       child: Shimmer.fromColors(
-        baseColor: Theme.of(context).colorScheme.primary,
-        highlightColor: Colors.amber,
-        child: Image.asset(
+        baseColor: primaryColor,
+        highlightColor: const Color.fromARGB(255, 255, 232, 163),
+        child: SvgPicture.asset(
           Assets.logo,
           width: 300,
         ),
