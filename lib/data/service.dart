@@ -22,7 +22,7 @@ Future<User> fetchUsers() async {
   }
 }
 
-Future<void> signIn(String username, String password) async {
+Future<User> signIn(String username, String password) async {
   try {
     final response = await http.post(
       Uri.parse('$url/auth/sign-in'),
@@ -39,9 +39,13 @@ Future<void> signIn(String username, String password) async {
       final data = responseData['data'] as Map<String, dynamic>;
 
       // Safely assign values
-      UserInfo().token = data['token'] as String?;
-      UserInfo().id = data['id'] as String?;
-      UserInfo().role = data['role'] as String?;
+      final res = User(
+        id: data['id'] as String,
+        userName: username,
+        role: data['role'] as String,
+        token: data['token'] as String,
+      );
+      return res;
     } else {
       // Handle non-200 responses with more context
       final error = jsonDecode(response.body);

@@ -2,8 +2,13 @@ class User {
   String id;
   String userName;
   String role;
+  String? token;
 
-  User({required this.id, required this.userName, required this.role});
+  User(
+      {required this.id,
+      required this.userName,
+      required this.role,
+      this.token});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return switch (json) {

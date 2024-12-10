@@ -41,6 +41,7 @@ dependencies:
   http: ^1.2.2
   gap: ^3.0.1
   gotrue: ^2.11.0
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:

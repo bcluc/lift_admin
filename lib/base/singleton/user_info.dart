@@ -1,11 +1,11 @@
 class UserInfo {
-  static final UserInfo _userInfo = UserInfo._internal();
+  UserInfo._internal();
+
+  static UserInfo _userInfo = UserInfo._internal();
 
   factory UserInfo() {
     return _userInfo;
   }
-
-  UserInfo._internal();
 
   String? userName = '';
   String? id;

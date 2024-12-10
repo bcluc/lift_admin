@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -46,16 +49,25 @@ class _SignInScreenState extends State<SignInScreen> {
     });
 
     try {
-      signIn(enteredUserName, enteredPassword);
+      final authRes = await signIn(enteredUserName, enteredPassword);
+
       // final authRes = await supabase.auth.signInWithPassword(
       //   email: enteredUserName,
       //   password: enteredPassword,
       // );
+      UserInfo().token = authRes.token;
+      UserInfo().id = authRes.id;
+      UserInfo().role = authRes.role;
+      UserInfo().userName = authRes.userName;
+      print(UserInfo().id);
 
-      if (UserInfo().token != null) {
+      if (authRes.token != null) {
         // await fetchProfileData();
+        print(UserInfo().token);
 
         if (mounted) {
+          print(UserInfo().userName);
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Center(
@@ -69,12 +81,11 @@ class _SignInScreenState extends State<SignInScreen> {
               width: 300,
             ),
           );
-
-          // if (profileData['role'] == 'end-user') {
-          //   context.go('/browse');
-          // } else if (profileData['role'] == 'admin') {
-          //   context.go('/admin/dashboard');
-          // }
+          if (authRes.role == 'admin') {
+            context.go('/admin/hub');
+          } else if (authRes.role == 'coordinator') {
+            context.go('/hub/detail');
+          }
         }
       }
     } on AuthException catch (error) {
@@ -117,8 +128,8 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
     super.initState();
-    if (UserInfo().token != null) {
-      // context.go('/browse');
+    if (UserInfo().token == null) {
+      context.go('/sign-in');
     }
   }
 

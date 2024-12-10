@@ -7,6 +7,7 @@ void main() {
   runApp(const MyApp());
 }
 
+// flutter run -d chrome --web-renderer html --dart-define-from-file=lib/config/.env
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
