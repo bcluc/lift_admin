@@ -15,7 +15,7 @@ class Header extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .headlineLarge
-              ?.copyWith(color: secondaryColorTitle),
+              ?.copyWith(color: labelColor),
         ),
         const Spacer(),
       ],

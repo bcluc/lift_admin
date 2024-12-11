@@ -35,7 +35,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            widget.title ?? 'Mật khẩu',
+            widget.title ?? 'Password',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

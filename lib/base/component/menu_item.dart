@@ -19,17 +19,17 @@ class MenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPress,
-      highlightColor: Colors.white.withOpacity(0.1),
+      highlightColor: Colors.white.withOpacity(0.02),
       overlayColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.hovered)) {
-          return Colors.white;
+          return Colors.white.withOpacity(0.06);
         }
         return null;
       }),
       borderRadius: BorderRadius.circular(8),
       child: Ink(
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : null,
+          color: isSelected ? Colors.white.withOpacity(0.08) : null,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -38,7 +38,7 @@ class MenuItem extends StatelessWidget {
               padding: const EdgeInsets.all(14),
               child: Icon(
                 iconData,
-                color: isSelected ? secondaryColor : secondaryColorSubtitle,
+                color: isSelected ? primaryColor : labelColor,
               ),
             ),
             Expanded(
@@ -47,7 +47,7 @@ class MenuItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: isSelected ? secondaryColor : secondaryColorSubtitle,
+                  color: isSelected ? Colors.white : labelColor,
                 ),
                 maxLines: 1,
               ),

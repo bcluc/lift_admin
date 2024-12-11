@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:lift_admin/base/assets.dart';
 import 'package:lift_admin/base/common_variables.dart';
 
 class SideBarHeader extends StatelessWidget {
@@ -13,11 +15,22 @@ class SideBarHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: SvgPicture.asset(
+              Assets.logo,
+              height: 38,
+              fit: BoxFit.contain,
+              alignment: Alignment.centerLeft,
+            ),
+          ),
+        ),
         IconButton(
           onPressed: onPress,
           icon: const Icon(Icons.menu_rounded),
           style: IconButton.styleFrom(
-            foregroundColor: secondaryColorSubtitle,
+            foregroundColor: labelColor,
             padding: const EdgeInsets.symmetric(
               horizontal: 14,
             ),
@@ -25,24 +38,6 @@ class SideBarHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             // side: const BorderSide(color: secondaryColorSubtitle, width: 1),
-          ),
-        ),
-        const Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(left: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'System Admin',
-                  style: TextStyle(color: secondaryColorTitle),
-                  maxLines: 1,
-                ),
-                Text('admin@viovid.com',
-                    maxLines: 1, style: TextStyle(color: secondaryColorTitle))
-              ],
-            ),
           ),
         ),
       ],

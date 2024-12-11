@@ -34,9 +34,9 @@ class _SignInScreenState extends State<SignInScreen> {
 
     _errorText = '';
     if (enteredUserName.isEmpty) {
-      _errorText = 'Bạn chưa điền Tên đăng nhập';
+      _errorText = 'User name is missing';
     } else if (enteredPassword.isEmpty) {
-      _errorText = 'Bạn chưa nhập Mật khẩu';
+      _errorText = 'Password is missing';
     }
 
     if (_errorText.isNotEmpty) {
@@ -72,7 +72,7 @@ class _SignInScreenState extends State<SignInScreen> {
             const SnackBar(
               content: Center(
                 child: Text(
-                  'Đăng nhập thành công.',
+                  'Sign in success.',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ),
@@ -81,7 +81,8 @@ class _SignInScreenState extends State<SignInScreen> {
               width: 300,
             ),
           );
-          if (authRes.role == 'admin') {
+          //context.go('/admin/hub');
+          if (authRes.role == 'administrator') {
             context.go('/admin/hub');
           } else if (authRes.role == 'coordinator') {
             context.go('/hub/detail');
@@ -94,7 +95,7 @@ class _SignInScreenState extends State<SignInScreen> {
         if (error.message == "Invalid login credentials") {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Tên đăng nhập hoặc mật khẩu sai'),
+              content: Text('Invalid login credentials'),
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -114,7 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Có lỗi xảy ra, vui lòng thử lại.'),
+            content: const Text('There is something wrong.'),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -130,6 +131,12 @@ class _SignInScreenState extends State<SignInScreen> {
     super.initState();
     if (UserInfo().token == null) {
       context.go('/sign-in');
+    } else {
+      if (UserInfo().role == 'administrator') {
+        context.go('/admin');
+      } else if (UserInfo().role == 'coordinator') {
+        context.go('/hub');
+      }
     }
   }
 
@@ -156,7 +163,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   Row(
                     children: [
                       SvgPicture.asset(
-                        Assets.logo,
+                        Assets.logoImg,
                         width: 50,
                         fit: BoxFit.cover,
                       ),
@@ -172,7 +179,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'Đăng nhập',
+                              'Sign in',
                               style: TextStyle(
                                 fontWeight: FontWeight.w900,
                                 fontSize: 28,
@@ -196,7 +203,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
-                                    'Tên đăng nhập',
+                                    'User name',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -263,7 +270,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                         backgroundColor: primaryColor,
                                       ),
                                       child: const Text(
-                                        'Đăng nhập',
+                                        'Sign in',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,

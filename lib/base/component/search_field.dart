@@ -13,8 +13,8 @@ class SearchField extends StatelessWidget {
       fillColor: secondaryColorBg,
       filled: true,
       hintText: 'Tìm kiếm',
-      iconColor: secondaryColorSubtitle,
-      hintStyle: const TextStyle(color: secondaryColorSubtitle),
+      iconColor: subtitleColor,
+      hintStyle: const TextStyle(color: subtitleColor),
       border: const OutlineInputBorder(
         borderSide: BorderSide.none,
         borderRadius: BorderRadius.all(Radius.circular(8)),

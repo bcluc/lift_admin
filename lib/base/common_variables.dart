@@ -5,21 +5,22 @@ final vnDateFormat = DateFormat('dd/MM/yyyy');
 
 const Color primaryColor = Color.fromARGB(255, 245, 192, 57);
 
-const secondaryColor = Color.fromARGB(255, 255, 81, 81);
+const secondaryColor = Color(0xFF2D4A79);
 
-const secondaryColorBg = Color.fromARGB(255, 250, 250, 250);
+const secondaryColorBg = Color(0xFFF5EED8);
 
-const secondaryColorSideBorder = Color.fromARGB(255, 241, 241, 241);
+const sideBorderBgColor = Color(0xFF1C2536);
 
-const secondaryColorSubtitle = Color(0xFF686868);
+const subtitleColor = Color(0xFF686868);
 
-const secondaryColorBorder = Color.fromARGB(255, 217, 217, 217);
+const borderColor = Color(0xFF9CA3AF);
 
-const secondaryColorTitle = Color.fromARGB(255, 48, 48, 48);
+const labelColor = Color(0xFFD1D5DB);
 
-const secondaryColorDisable = Color.fromARGB(255, 178, 178, 178);
+const disabledColor = Color.fromARGB(255, 178, 178, 178);
 
-const secondaryColorBaseBg = Color.fromARGB(255, 255, 239, 231);
+const baseBgColor = Color(0xFFF9FAFC);
+
 TextStyle errorTextStyle(BuildContext context) {
   return TextStyle(color: Theme.of(context).colorScheme.error);
 }

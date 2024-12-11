@@ -21,15 +21,6 @@ class _BrowseScreenState extends State<BrowseScreen> {
       Color.fromARGB(255, 255, 81, 81),
     ];
 
-    // print(topicsData.toList());
-    // return FutureBuilder(
-    //   future: fetchData(),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.connectionState == ConnectionState.waiting) {
-    //       return const Center(child: CircularProgressIndicator());
-    //     } else if (snapshot.hasError) {
-    //       return const Center(child: Text('Error fetching data'));
-    //     } else {
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(defaultPadding),
@@ -38,7 +29,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
             const Header(),
             const SizedBox(height: 6),
             const Divider(
-              color: secondaryColorBorder,
+              color: borderColor,
               thickness: 1,
             ),
             Row(
@@ -53,7 +44,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: secondaryColorBorder,
+                        color: borderColor,
                         width: 1,
                       ),
                     ),
