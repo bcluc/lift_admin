@@ -1,5 +1,5 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -59,14 +59,14 @@ class _SignInScreenState extends State<SignInScreen> {
       UserInfo().id = authRes.id;
       UserInfo().role = authRes.role;
       UserInfo().userName = authRes.userName;
-      print(UserInfo().id);
+      // print(UserInfo().id);
 
       if (authRes.token != null) {
         // await fetchProfileData();
-        print(UserInfo().token);
+        // print(UserInfo().token);
 
         if (mounted) {
-          print(UserInfo().userName);
+          // print(UserInfo().userName);
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -242,10 +242,11 @@ class _SignInScreenState extends State<SignInScreen> {
                             //   ),
                             // ),
                             const SizedBox(height: 20),
+                            // ignore: unnecessary_null_comparison
                             if (_errorText != null)
                               Align(
                                 child: Text(
-                                  _errorText!,
+                                  _errorText,
                                   style: errorTextStyle(context),
                                 ),
                               ),

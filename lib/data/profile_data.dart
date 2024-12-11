@@ -1,10 +1,11 @@
-import 'package:lift_admin/base/singleton/user_info.dart';
-import 'package:lift_admin/data/service.dart';
+// import 'package:lift_admin/base/singleton/user_info.dart';
+// import 'package:lift_admin/data/service.dart';
 
 final Map<String, dynamic> profileData = {};
 
 Future<void> fetchProfileData() async {
-  final userId = UserInfo().id;
+  // final userId = UserInfo().id;
+
   // final data = await supabase
   //     .from('profile')
   //     .select('id, full_name, avatar_url, dob, my_list, password, role')

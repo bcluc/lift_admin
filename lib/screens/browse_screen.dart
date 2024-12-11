@@ -12,15 +12,6 @@ class BrowseScreen extends StatefulWidget {
 class _BrowseScreenState extends State<BrowseScreen> {
   @override
   Widget build(BuildContext context) {
-    const List<Color> palette = [
-      Color.fromARGB(255, 130, 2, 98),
-      Color.fromARGB(255, 41, 23, 32),
-      Color.fromARGB(255, 193, 42, 90),
-      Color.fromARGB(255, 4, 167, 118),
-      Color.fromARGB(255, 255, 209, 102),
-      Color.fromARGB(255, 255, 81, 81),
-    ];
-
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(defaultPadding),
@@ -51,7 +42,7 @@ class _BrowseScreenState extends State<BrowseScreen> {
                   ),
                 ),
                 const SizedBox(width: defaultPadding),
-                Text('Browse Screen'),
+                const Text('Browse Screen'),
               ],
             ),
           ],
