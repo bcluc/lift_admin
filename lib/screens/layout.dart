@@ -52,7 +52,8 @@ class _LayoutState extends State<Layout> {
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: const Color.fromARGB(255, 0, 0, 0)
+                                  .withOpacity(0.1),
                               spreadRadius: 1,
                               blurRadius: 2,
                               offset: const Offset(0, 1),

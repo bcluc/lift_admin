@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lift_admin/base/common_variables.dart';
 import 'package:lift_admin/config/router.dart';
+import 'package:localstorage/localstorage.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initLocalStorage();
+
   runApp(const MyApp());
 }
 
@@ -16,8 +20,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Movie Web',
       theme: ThemeData(
+        primaryColor: primaryColor,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: primaryColor,
+          seedColor: secondaryColor,
         ),
         textTheme: GoogleFonts.montserratTextTheme(),
         useMaterial3: true,

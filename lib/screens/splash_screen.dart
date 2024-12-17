@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_admin/base/assets.dart';
 import 'package:lift_admin/base/common_variables.dart';
-import 'package:lift_admin/base/singleton/user_info.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,7 +16,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Future<void> _redirect() async {
     await Future.delayed(const Duration(seconds: 2));
-    final session = UserInfo().token;
+    final session = localStorage.getItem('token');
     if (mounted) {
       if (session != null) {
         context.go('/browse');

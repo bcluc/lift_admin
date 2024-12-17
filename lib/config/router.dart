@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import 'package:lift_admin/base/singleton/user_info.dart';
 import 'package:lift_admin/screens/account/account_screen.dart';
 import 'package:lift_admin/screens/auth/sign_in.dart';
 import 'package:lift_admin/screens/complaint/complaint_screen.dart';
@@ -9,6 +8,7 @@ import 'package:lift_admin/screens/layout.dart';
 import 'package:lift_admin/screens/order_process/order_process.dart';
 import 'package:lift_admin/screens/regulation/regulation_screen.dart';
 import 'package:lift_admin/screens/splash_screen.dart';
+import 'package:localstorage/localstorage.dart';
 
 GoRouter appRouter = GoRouter(
   routes: [
@@ -16,9 +16,11 @@ GoRouter appRouter = GoRouter(
       path: '/',
       name: 'splash',
       redirect: (context, state) async {
-        final token = UserInfo().token;
+        final token = localStorage.getItem('token');
         if (token != null) {
-          return UserInfo().role == 'coordinator' ? '/hub' : '/admin/hub';
+          return localStorage.getItem('role') == 'coordinator'
+              ? '/hub'
+              : '/admin/hub';
         }
         return null;
       },
@@ -28,9 +30,11 @@ GoRouter appRouter = GoRouter(
       path: '/sign-in',
       name: 'sign-in',
       redirect: (context, state) async {
-        final token = UserInfo().token;
+        final token = localStorage.getItem('token');
         if (token != null) {
-          return UserInfo().role == 'coordinator' ? '/hub' : '/admin/hub';
+          return localStorage.getItem('role') == 'coordinator'
+              ? '/hub'
+              : '/admin/hub';
         }
         return null;
       },
@@ -45,13 +49,13 @@ GoRouter appRouter = GoRouter(
           path: '/admin',
           name: 'admin',
           redirect: (context, state) async {
-            final token = UserInfo().token;
+            final token = localStorage.getItem('token');
             // print('Token role: ${UserInfo().role}');
             // print(token);
             if (token == null) {
               return '/sign-in';
             } else {
-              if (UserInfo().role == 'coordinator') {
+              if (localStorage.getItem('role') == 'coordinator') {
                 return '/hub';
               }
             }
@@ -94,13 +98,13 @@ GoRouter appRouter = GoRouter(
           path: '/hub',
           name: 'hub',
           redirect: (context, state) async {
-            final token = UserInfo().token;
+            final token = localStorage.getItem('token');
             // print('Token role: ${UserInfo().role}');
             // print(token);
             if (token == null) {
               return '/sign-in';
             } else {
-              if (UserInfo().role == 'administrator') {
+              if (localStorage.getItem('role') == 'administrator') {
                 return '/admin/hub';
               }
             }

@@ -17,12 +17,38 @@ const borderColor = Color(0xFF9CA3AF);
 
 const labelColor = Color(0xFFD1D5DB);
 
+const neutralColor = Color(0xFFF3F4F6);
+
 const disabledColor = Color.fromARGB(255, 178, 178, 178);
 
 const baseBgColor = Color(0xFFF9FAFC);
+
+const selectedColor = Color(0xFFE7EBEF);
 
 TextStyle errorTextStyle(BuildContext context) {
   return TextStyle(color: Theme.of(context).colorScheme.error);
 }
 
 const defaultPadding = 16.0;
+
+Color getDataRowColor(BuildContext context, Set<WidgetState> states) {
+  if (states.contains(WidgetState.selected)) {
+    return labelColor;
+  }
+
+  if (states.contains(WidgetState.pressed)) {
+    return const Color.fromARGB(255, 200, 207, 218);
+  }
+  if (states.contains(WidgetState.hovered)) {
+    return selectedColor;
+  }
+
+  return Colors.transparent;
+}
+
+final myIconButtonStyle = IconButton.styleFrom(
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(10),
+  ),
+  padding: const EdgeInsets.all(10),
+);

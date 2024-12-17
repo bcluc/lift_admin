@@ -1,6 +1,5 @@
 // import 'dart:convert';
 // import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -9,8 +8,8 @@ import 'package:gotrue/gotrue.dart';
 import 'package:lift_admin/base/assets.dart';
 import 'package:lift_admin/base/common_variables.dart';
 import 'package:lift_admin/base/component/password_input.dart';
-import 'package:lift_admin/base/singleton/user_info.dart';
 import 'package:lift_admin/data/service.dart';
+import 'package:localstorage/localstorage.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -55,11 +54,16 @@ class _SignInScreenState extends State<SignInScreen> {
       //   email: enteredUserName,
       //   password: enteredPassword,
       // );
-      UserInfo().token = authRes.token;
-      UserInfo().id = authRes.id;
-      UserInfo().role = authRes.role;
-      UserInfo().userName = authRes.userName;
-      // print(UserInfo().id);
+
+      int count = await queryCountHub();
+      print("COUNT NE");
+      print(count);
+
+      // UserInfo().token = authRes.token;
+      // UserInfo().id = authRes.id;
+      // UserInfo().role = authRes.role;
+      // UserInfo().userName = authRes.userName;
+      print(localStorage.getItem('token'));
 
       if (authRes.token != null) {
         // await fetchProfileData();
@@ -129,12 +133,12 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void initState() {
     super.initState();
-    if (UserInfo().token == null) {
+    if (localStorage.getItem('token') == null) {
       context.go('/sign-in');
     } else {
-      if (UserInfo().role == 'administrator') {
+      if (localStorage.getItem('role') == 'administrator') {
         context.go('/admin');
-      } else if (UserInfo().role == 'coordinator') {
+      } else if (localStorage.getItem('role') == 'coordinator') {
         context.go('/hub');
       }
     }
