@@ -1,23 +1,23 @@
-class User {
+class UserSession {
   String id;
   String userName;
   String role;
   String? token;
 
-  User(
+  UserSession(
       {required this.id,
       required this.userName,
       required this.role,
       this.token});
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory UserSession.fromJson(Map<String, dynamic> json) {
     return switch (json) {
       {
         '_id': String _id,
         'userName': String userName,
         'role': String role,
       } =>
-        User(
+        UserSession(
           id: _id,
           userName: userName,
           role: role,

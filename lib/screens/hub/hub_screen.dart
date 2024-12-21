@@ -31,7 +31,7 @@ class _HubScreenState extends State<HubScreen> {
   late List<Hub> _hubRows;
   late int _hubCount;
   final _paginationController = TextEditingController(text: "1");
-  Future<void> _loadReadersOfPageIndex(int pageIndex) async {
+  Future<void> _loadHubsOfPageIndex(int pageIndex) async {
     String searchText = _searchController.text.toLowerCase();
 
     List<Hub> newHubRows = searchText.isEmpty
@@ -46,7 +46,7 @@ class _HubScreenState extends State<HubScreen> {
     });
   }
 
-  late final Future<void> _futureRecentReaders = _getRecentHubs();
+  late final Future<void> _futureRecentHubs = _getRecentHubs();
   Future<void> _getRecentHubs() async {
     /* 
     Delay 1 khoảng bằng thời gian animation của TabController 
@@ -57,23 +57,23 @@ class _HubScreenState extends State<HubScreen> {
     _hubCount = await queryCountHub();
   }
 
-  Future<void> _logicAddReader() async {
-    Hub? newReader = await showDialog(
+  Future<void> _logicAddHub() async {
+    Hub? newHub = await showDialog(
       context: context,
       builder: (ctx) => const AddEditHubForm(),
     );
 
-    if (newReader != null) {
+    if (newHub != null) {
       setState(() {
         if (_hubRows.length < _maxRow) {
-          _hubRows.add(newReader);
+          _hubRows.add(newHub);
         }
         _hubCount++;
       });
     }
   }
 
-  Future<void> _logicEditReader() async {
+  Future<void> _logicEditHub() async {
     String? message = await showDialog(
       context: context,
       builder: (ctx) => AddEditHubForm(
@@ -87,20 +87,17 @@ class _HubScreenState extends State<HubScreen> {
     }
   }
 
-  Future<void> _logicDeleteReader(BuildContext ctx) async {
-    var deleteReaderName = _hubRows[_selectedRow].name;
+  Future<void> _logicDeleteHub(BuildContext ctx) async {
+    var deleteHubName = _hubRows[_selectedRow].name;
 
     /* Xóa dòng dữ liệu*/
-    int res = await deleteHub(_hubRows[_selectedRow].id!);
-    // print(res);
+    await deleteHub(_hubRows[_selectedRow].id!);
+
     int totalPages = _hubCount ~/ _maxRow + min(_hubCount % _maxRow, 1);
-    print("totalPages = $totalPages");
     int currentPage = int.parse(_paginationController.text);
-    print("currentPage = $currentPage");
     if (currentPage == 0) currentPage = 1;
 
     _hubCount--;
-    print("hubCount = $_hubCount");
     // print('totalPage = $totalPages');
 
     if (currentPage == totalPages) {
@@ -109,10 +106,10 @@ class _HubScreenState extends State<HubScreen> {
         currentPage--;
         if (currentPage == 0) currentPage = 1;
         _paginationController.text = currentPage.toString();
-        _loadReadersOfPageIndex(currentPage);
+        _loadHubsOfPageIndex(currentPage);
       }
     } else {
-      _loadReadersOfPageIndex(currentPage);
+      _loadHubsOfPageIndex(currentPage);
     }
 
     setState(() {});
@@ -123,7 +120,7 @@ class _HubScreenState extends State<HubScreen> {
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
           content: Text(
-            'Deleted $deleteReaderName.',
+            'Deleted $deleteHubName.',
             textAlign: TextAlign.center,
           ),
           behavior: SnackBarBehavior.floating,
@@ -148,7 +145,7 @@ class _HubScreenState extends State<HubScreen> {
     return Scaffold(
       backgroundColor: baseBgColor,
       body: FutureBuilder(
-          future: _futureRecentReaders,
+          future: _futureRecentHubs,
           builder: (ctx, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -171,7 +168,7 @@ class _HubScreenState extends State<HubScreen> {
                       ),
                       const Spacer(),
                       FilledButton(
-                        onPressed: _logicAddReader,
+                        onPressed: _logicAddHub,
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.all(20),
                           shape: RoundedRectangleBorder(
@@ -189,7 +186,7 @@ class _HubScreenState extends State<HubScreen> {
                       ),
                       const Gap(20),
                       FilledButton.icon(
-                        onPressed: _selectedRow == -1 ? null : _logicEditReader,
+                        onPressed: _selectedRow == -1 ? null : _logicEditHub,
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.all(20),
                           shape: RoundedRectangleBorder(
@@ -234,8 +231,7 @@ class _HubScreenState extends State<HubScreen> {
                                         child: const Text('Cancel'),
                                       ),
                                       FilledButton(
-                                        onPressed: () =>
-                                            _logicDeleteReader(ctx),
+                                        onPressed: () => _logicDeleteHub(ctx),
                                         child: const Text('Yes'),
                                       ),
                                     ],
@@ -298,7 +294,7 @@ class _HubScreenState extends State<HubScreen> {
                           _paginationController.text = '1';
                           _hubCount =
                               await queryCountHubSearch(_searchController.text);
-                          _loadReadersOfPageIndex(1);
+                          _loadHubsOfPageIndex(1);
                         }
                       },
                     ),
@@ -375,7 +371,7 @@ class _HubScreenState extends State<HubScreen> {
                                       setState(() {
                                         _selectedRow = index;
                                       });
-                                      _logicEditReader();
+                                      _logicEditHub();
                                     },
                                     cells: [
                                       DataCell(
@@ -418,7 +414,7 @@ class _HubScreenState extends State<HubScreen> {
                                     Pagination(
                                       controller: _paginationController,
                                       maxPages: totalPages,
-                                      onChanged: _loadReadersOfPageIndex,
+                                      onChanged: _loadHubsOfPageIndex,
                                     ),
                                     const Gap(20),
                                   ],

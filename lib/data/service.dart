@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:lift_admin/data/model/hub.dart';
 
 import 'package:lift_admin/data/model/profile.dart';
+import 'package:lift_admin/data/model/user.dart';
 import 'package:localstorage/localstorage.dart';
 
 String url = const String.fromEnvironment("URL_ROOT");
@@ -12,13 +13,14 @@ String url = const String.fromEnvironment("URL_ROOT");
 // };
 final headers = {'Content-Type': 'application/json'};
 
-Future<User> fetchUsers() async {
+Future<UserSession> fetchUsers() async {
   final response = await http.get(Uri.parse('$url/users'), headers: headers);
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
     // then parse the JSON.
-    return User.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    return UserSession.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
   } else {
     // If the server did not return a 200 OK response,
     // then throw an exception.
@@ -26,13 +28,13 @@ Future<User> fetchUsers() async {
   }
 }
 
-Future<User> signIn(String username, String password) async {
+Future<UserSession> signIn(String username, String password) async {
   if (url == "http://localhost:27018") {
     localStorage.setItem('token', 'token');
     localStorage.setItem('role', 'administrator');
     localStorage.setItem('id', "6758eae77278a8fec58ff732");
     localStorage.setItem('userName', username);
-    return User(
+    return UserSession(
       id: "6758eae77278a8fec58ff732",
       userName: username,
       role: 'administrator',
@@ -55,7 +57,7 @@ Future<User> signIn(String username, String password) async {
       final data = responseData['data'] as Map<String, dynamic>;
 
       // Safely assign values
-      final res = User(
+      final res = UserSession(
         id: data['id'] as String,
         userName: username,
         role: data['role'] as String,
@@ -236,5 +238,160 @@ Future<List<Hub>> searchHubWithNumberRowIgnore({
     }
   } catch (e) {
     throw Exception('An error occurred during searchHubWithNumberRowIgnore');
+  }
+}
+
+//
+//
+// USER
+//
+//
+
+Future<List<User>> queryUser({
+  required int numberRowIgnore,
+}) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$url/user/row?numberRowIgnore=$numberRowIgnore'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as List<dynamic>;
+      return data.map((e) => User.fromJson(e as Map<String, dynamic>)).toList();
+    } else {
+      throw Exception('Failed to load recent users');
+    }
+  } catch (e) {
+    print('Error during queryHub: $e');
+    throw Exception('An error occurred during queryUser');
+  }
+}
+
+Future<List<User>> queryAllUser() async {
+  try {
+    final response = await http.get(
+      Uri.parse('$url/users'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as List<dynamic>;
+      return data.map((e) => User.fromJson(e as Map<String, dynamic>)).toList();
+    } else {
+      throw Exception('Failed to load recent users');
+    }
+  } catch (e) {
+    print('Error during queryHub: $e');
+    throw Exception('An error occurred during queryUser');
+  }
+}
+
+Future<int> queryCountUser() async {
+  try {
+    final response = await http.get(
+      Uri.parse('$url/users/count'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return data['count'] as int;
+    } else {
+      throw Exception('Failed to load recent users');
+    }
+  } catch (e) {
+    print('Error during queryHub: $e');
+    throw Exception('An error occurred during queryUserHub');
+  }
+}
+
+Future<int> queryCountUserSearch(String str) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$url/users/search?search=$str'),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as List<dynamic>;
+      final list =
+          data.map((e) => User.fromJson(e as Map<String, dynamic>)).toList();
+      return list.length;
+    } else {
+      throw Exception('Failed to load recent users');
+    }
+  } catch (e) {
+    print('Error during queryCountUserSearch: $e');
+    throw Exception('An error occurred during queryCountUserSearch');
+  }
+}
+
+Future<int> deleteUser(String userId) async {
+  try {
+    final response = await http.delete(
+      Uri.parse('$url/user?id=$userId'),
+      headers: headers,
+    );
+
+    return response.statusCode;
+  } catch (e) {
+    throw Exception('An error occurred during deleteUser');
+  }
+}
+
+Future<int> updateUser(User editUser) async {
+  String id = editUser.id!;
+  String userName = editUser.name;
+  String role = editUser.role;
+
+  try {
+    final response = await http.put(
+      Uri.parse('$url/user?id=$id'),
+      headers: headers,
+      body: jsonEncode({
+        'username': userName,
+        'role': role,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print('Response body: ${response.body}');
+
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      // Access the nested 'data' object
+      final data = responseData['matched_count'] as int;
+      return data;
+    } else {
+      // Handle non-200 responses with more context
+      final error = jsonDecode(response.body);
+      throw Exception(
+          'Failed to update: ${error['message'] ?? 'Unknown error'}');
+    }
+  } catch (e) {
+    throw Exception('An error occurred during update');
+  }
+}
+
+Future<List<User>> searchUserWithNumberRowIgnore({
+  required String str,
+  required int numberRowIgnore,
+}) async {
+  try {
+    final response = await http.get(
+      Uri.parse(
+          '$url/user/search?search=$str&numberRowIgnore=$numberRowIgnore'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as List<dynamic>;
+      return data.map((e) => User.fromJson(e as Map<String, dynamic>)).toList();
+    } else {
+      // Handle non-200 responses with more context
+      final error = jsonDecode(response.body);
+      throw Exception(
+          'Failed to update: ${error['message'] ?? 'Unknown error'}');
+    }
+  } catch (e) {
+    throw Exception('An error occurred during searchUserWithNumberRowIgnore');
   }
 }
