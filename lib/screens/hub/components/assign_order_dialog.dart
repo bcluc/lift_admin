@@ -1,64 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:lift_admin/base/component/label_text_form_field.dart';
-import 'package:lift_admin/data/model/hub.dart';
 import 'package:lift_admin/data/service.dart';
 
-class AddEditHubForm extends StatefulWidget {
-  const AddEditHubForm({super.key, this.editHub});
+class AssignOrderDialog extends StatefulWidget {
+  AssignOrderDialog({super.key, required this.hubId});
 
-  final Hub? editHub;
+  String hubId;
 
   @override
-  State<AddEditHubForm> createState() => _AddEditHubFormState();
+  State<AssignOrderDialog> createState() => _AssignOrderDialogState();
 }
 
-class _AddEditHubFormState extends State<AddEditHubForm> {
+class _AssignOrderDialogState extends State<AssignOrderDialog> {
   final _formKey = GlobalKey<FormState>();
   bool _isProcessing = false;
 
-  final _hubNameController = TextEditingController();
-
-  final _addressController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-    if (widget.editHub != null) {
-      /*
-      Nếu là chỉnh sửa độc giả
-      thì phải fill thông tin vào của độc giả cần chỉnh sửa vào form
-      */
-      _hubNameController.text = widget.editHub!.name;
-      _addressController.text = widget.editHub!.address;
-    }
-  }
-
-  void saveHub(BuildContext context) async {
+  void assign(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isProcessing = true;
       });
 
-      if (widget.editHub == null) {
-        Hub newHub = Hub(
-          name: _hubNameController.text.toLowerCase(),
-          address: _addressController.text,
-        );
+      await assignOrderByHubId(hubId: widget.hubId);
 
-        String returningId = await insertHub(newHub.name, newHub.address);
-        newHub.id = returningId;
-
-        if (mounted) {
-          Navigator.of(context).pop(newHub);
-        }
-      } else {
-        widget.editHub!.name = _hubNameController.text.toLowerCase();
-        widget.editHub!.address = _addressController.text;
-
-        await updateHub(widget.editHub!);
-
-        if (mounted) {
-          Navigator.of(context).pop('updated');
-        }
+      if (mounted) {
+        Navigator.of(context).pop('success');
       }
 
       setState(() {
@@ -67,12 +32,10 @@ class _AddEditHubFormState extends State<AddEditHubForm> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(widget.editHub == null
-                ? 'Add hub successful.'
-                : 'Update hub successful.'),
+          const SnackBar(
+            content: Text('Assign order successfully'),
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
             width: 300,
           ),
         );
@@ -100,12 +63,10 @@ class _AddEditHubFormState extends State<AddEditHubForm> {
               children: [
                 Row(
                   children: [
-                    Text(
-                      widget.editHub == null ? 'ADD NEW HUB' : 'EDIT HUB',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                    const Text(
+                      'Assign to deliver',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
                     IconButton(
@@ -115,18 +76,15 @@ class _AddEditHubFormState extends State<AddEditHubForm> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                LabelTextFormField(
-                  labelText: 'Hub Name',
-                  controller: _hubNameController,
+                const Text(
+                  'Are you sure to assign this order to deliver?',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
                 //
                 const SizedBox(height: 20),
-                LabelTextFormField(
-                  labelText: 'Address',
-                  controller: _addressController,
-                ),
-                //
-                const SizedBox(height: 40),
                 Align(
                   alignment: Alignment.center,
                   child: _isProcessing
@@ -139,7 +97,7 @@ class _AddEditHubFormState extends State<AddEditHubForm> {
                           ),
                         )
                       : FilledButton(
-                          onPressed: () => saveHub(context),
+                          onPressed: () => assign(context),
                           style: FilledButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -150,7 +108,7 @@ class _AddEditHubFormState extends State<AddEditHubForm> {
                             ),
                           ),
                           child: const Text(
-                            'Save',
+                            'Yes',
                             textAlign: TextAlign.center,
                           ),
                         ),

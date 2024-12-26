@@ -1,13 +1,13 @@
 import 'package:go_router/go_router.dart';
 import 'package:lift_admin/screens/account/account_screen.dart';
 import 'package:lift_admin/screens/auth/sign_in.dart';
-import 'package:lift_admin/screens/complaint/complaint_screen.dart';
 import 'package:lift_admin/screens/hub/hub_detail.dart';
 import 'package:lift_admin/screens/hub/hub_screen.dart';
 import 'package:lift_admin/screens/layout.dart';
+import 'package:lift_admin/screens/order/order_screen.dart';
 import 'package:lift_admin/screens/order_process/order_process.dart';
-import 'package:lift_admin/screens/regulation/regulation_screen.dart';
 import 'package:lift_admin/screens/splash_screen.dart';
+import 'package:lift_admin/screens/staff/staff_screen.dart';
 import 'package:localstorage/localstorage.dart';
 
 GoRouter appRouter = GoRouter(
@@ -77,16 +77,16 @@ GoRouter appRouter = GoRouter(
           name: 'admin-process',
           builder: (context, state) => const OrderProcessScreen(),
         ),
-        GoRoute(
-          path: '/admin/complaint',
-          name: 'admin-complaint',
-          builder: (context, state) => const ComplaintScreen(),
-        ),
-        GoRoute(
-          path: '/admin/regulation',
-          name: 'admin-regulation',
-          builder: (context, state) => const RegulationScreen(),
-        ),
+        // GoRoute(
+        //   path: '/admin/complaint',
+        //   name: 'admin-complaint',
+        //   builder: (context, state) => const ComplaintScreen(),
+        // ),
+        // GoRoute(
+        //   path: '/admin/regulation',
+        //   name: 'admin-regulation',
+        //   builder: (context, state) => const RegulationScreen(),
+        // ),
       ],
     ),
     ShellRoute(
@@ -108,13 +108,23 @@ GoRouter appRouter = GoRouter(
                 return '/admin/hub';
               }
             }
-            return null;
+            return "/hub/detail";
           },
         ),
         GoRoute(
           path: '/hub/detail',
           name: 'detail',
           builder: (context, state) => const HubDetail(),
+        ),
+        GoRoute(
+          path: '/hub/order',
+          name: 'hub-order',
+          builder: (context, state) => const OrderScreen(),
+        ),
+        GoRoute(
+          path: '/hub/staff',
+          name: 'hub-staff',
+          builder: (context, state) => const StaffScreen(),
         ),
       ],
     ),

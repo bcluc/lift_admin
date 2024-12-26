@@ -18,7 +18,14 @@ class _AddEditUserFormState extends State<AddEditUserForm> {
 
   final _userNameController = TextEditingController();
 
-  final _roleController = TextEditingController();
+  String? _selectedRole;
+  final List<String> _roles = const [
+    'administrator',
+    'coordinator',
+    'shipper',
+    'client'
+  ]; // Add your roles here
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +35,7 @@ class _AddEditUserFormState extends State<AddEditUserForm> {
       thì phải fill thông tin vào của độc giả cần chỉnh sửa vào form
       */
       _userNameController.text = widget.editUser!.name;
-      _roleController.text = widget.editUser!.role;
+      _selectedRole = widget.editUser!.role;
     }
   }
 
@@ -52,7 +59,7 @@ class _AddEditUserFormState extends State<AddEditUserForm> {
         }
       } else {
         widget.editUser!.name = _userNameController.text.toLowerCase();
-        widget.editUser!.role = _roleController.text;
+        widget.editUser!.role = _selectedRole!;
 
         await updateUser(widget.editUser!);
 
@@ -121,9 +128,22 @@ class _AddEditUserFormState extends State<AddEditUserForm> {
                 ),
                 //
                 const SizedBox(height: 20),
-                LabelTextFormField(
-                  labelText: 'Role',
-                  controller: _roleController,
+                DropdownButtonFormField<String>(
+                  value: _selectedRole,
+                  items: _roles.map((String role) {
+                    return DropdownMenuItem<String>(
+                      value: role,
+                      child: Text(role),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedRole = newValue!;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Role',
+                  ),
                 ),
                 //
                 const SizedBox(height: 40),

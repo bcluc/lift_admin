@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_admin/base/common_variables.dart';
 import 'package:lift_admin/base/component/side_bar.dart';
+import 'package:localstorage/localstorage.dart';
 
 class Layout extends StatefulWidget {
   const Layout({
@@ -67,6 +68,7 @@ class _LayoutState extends State<Layout> {
                               iconSize: 32,
                               onPressed: () async {
                                 if (context.mounted) {
+                                  localStorage.clear();
                                   context.go('/sign-in');
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

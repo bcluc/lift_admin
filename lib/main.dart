@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lift_admin/base/common_variables.dart';
 import 'package:lift_admin/config/router.dart';
 import 'package:localstorage/localstorage.dart';
-import 'package:http/http.dart' as http;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

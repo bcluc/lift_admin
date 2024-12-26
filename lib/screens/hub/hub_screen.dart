@@ -6,10 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:lift_admin/base/common_variables.dart';
 import 'package:lift_admin/base/component/pagination.dart';
 import 'package:lift_admin/base/component/search_field.dart';
-// import 'package:lift_admin/base/singleton/user_info.dart';
-import 'package:lift_admin/data/model/hub.dart';
+import 'package:lift_admin/data/dto/hub_dto.dart';
 import 'package:lift_admin/data/service.dart';
-import 'package:lift_admin/screens/hub/add_edit_hub_form.dart';
+import 'package:lift_admin/screens/hub/components/add_edit_hub_form.dart';
 import 'package:localstorage/localstorage.dart';
 
 class HubScreen extends StatefulWidget {
@@ -24,17 +23,21 @@ class _HubScreenState extends State<HubScreen> {
     'Id',
     'Hub name',
     'Address',
+    'Delivering orders',
+    'Instock orders',
+    'Success delivery',
+    'Failed delivery',
   ];
   final _searchController = TextEditingController();
   final _maxRow = 5;
   int _selectedRow = -1;
-  late List<Hub> _hubRows;
+  late List<HubDto> _hubRows;
   late int _hubCount;
   final _paginationController = TextEditingController(text: "1");
   Future<void> _loadHubsOfPageIndex(int pageIndex) async {
     String searchText = _searchController.text.toLowerCase();
 
-    List<Hub> newHubRows = searchText.isEmpty
+    List<HubDto> newHubRows = searchText.isEmpty
         ? await queryHub(numberRowIgnore: (pageIndex - 1) * _maxRow)
         : await searchHubWithNumberRowIgnore(
             str: searchText, numberRowIgnore: (pageIndex - 1) * _maxRow);
@@ -58,7 +61,7 @@ class _HubScreenState extends State<HubScreen> {
   }
 
   Future<void> _logicAddHub() async {
-    Hub? newHub = await showDialog(
+    HubDto? newHub = await showDialog(
       context: context,
       builder: (ctx) => const AddEditHubForm(),
     );
@@ -91,7 +94,7 @@ class _HubScreenState extends State<HubScreen> {
     var deleteHubName = _hubRows[_selectedRow].name;
 
     /* Xóa dòng dữ liệu*/
-    await deleteHub(_hubRows[_selectedRow].id!);
+    await deleteHub(_hubRows[_selectedRow].hubId!);
 
     int totalPages = _hubCount ~/ _maxRow + min(_hubCount % _maxRow, 1);
     int currentPage = int.parse(_paginationController.text);
@@ -359,7 +362,7 @@ class _HubScreenState extends State<HubScreen> {
                               rows: List.generate(
                                 _hubRows.length,
                                 (index) {
-                                  Hub hub = _hubRows[index];
+                                  HubDto hub = _hubRows[index];
                                   TextStyle cellTextStyle =
                                       const TextStyle(color: Colors.black);
                                   return DataRow(
@@ -379,7 +382,7 @@ class _HubScreenState extends State<HubScreen> {
                                           constraints: const BoxConstraints(
                                               maxWidth: 150),
                                           child: Text(
-                                            hub.id!,
+                                            hub.hubId!,
                                             style: cellTextStyle,
                                           ),
                                         ),
@@ -398,6 +401,30 @@ class _HubScreenState extends State<HubScreen> {
                                             hub.address,
                                             style: cellTextStyle,
                                           ),
+                                        ),
+                                      ),
+                                      DataCell(
+                                        Text(
+                                          hub.inProgressOrders.toString(),
+                                          style: cellTextStyle,
+                                        ),
+                                      ),
+                                      DataCell(
+                                        Text(
+                                          hub.pendingOrders.toString(),
+                                          style: cellTextStyle,
+                                        ),
+                                      ),
+                                      DataCell(
+                                        Text(
+                                          hub.successOrders.toString(),
+                                          style: cellTextStyle,
+                                        ),
+                                      ),
+                                      DataCell(
+                                        Text(
+                                          hub.failedOrders.toString(),
+                                          style: cellTextStyle,
                                         ),
                                       ),
                                     ],

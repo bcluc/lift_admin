@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lift_admin/base/common_variables.dart';
 import 'package:lift_admin/base/component/menu_item.dart';
 import 'package:lift_admin/base/component/side_bar_header.dart';
+import 'package:localstorage/localstorage.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({super.key});
@@ -14,6 +15,59 @@ class SideBar extends StatefulWidget {
 
 class _SideBarState extends State<SideBar> {
   bool isCollapsed = false;
+  List<Map<String, dynamic>> menuItems = [];
+  @override
+  void initState() {
+    super.initState();
+    _setMenuItems();
+  }
+
+  Future<void> _setMenuItems() async {
+    final role = localStorage.getItem('role');
+
+    if (role != null && role == 'administrator') {
+      setState(() {
+        menuItems = [
+          {
+            'path': '/admin/hub',
+            'icon': Icons.house_rounded,
+            'text': 'Hubs',
+          },
+          {
+            'path': '/admin/account',
+            'icon': Icons.person_3_rounded,
+            'text': 'Accounts',
+          },
+          {
+            'path': '/admin/process',
+            'icon': Icons.monitor_heart_rounded,
+            'text': 'Order processing',
+          },
+        ];
+      });
+    } else {
+      setState(() {
+        menuItems = [
+          {
+            'path': '/hub/detail',
+            'icon': Icons.home_rounded,
+            'text': 'Detail',
+          },
+          {
+            'path': '/hub/order',
+            'icon': Icons.delivery_dining_rounded,
+            'text': 'Order',
+          },
+          {
+            'path': '/hub/staff',
+            'icon': Icons.people_rounded,
+            'text': 'Staff',
+          },
+          // Add more items as needed
+        ];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,31 +140,3 @@ class _SideBarState extends State<SideBar> {
     );
   }
 }
-
-final List<Map<String, dynamic>> menuItems = [
-  {
-    'path': '/admin/hub',
-    'icon': Icons.house_rounded,
-    'text': 'Hubs',
-  },
-  {
-    'path': '/admin/account',
-    'icon': Icons.person_3_rounded,
-    'text': 'Accounts',
-  },
-  {
-    'path': '/admin/process',
-    'icon': Icons.monitor_heart_rounded,
-    'text': 'Order processing',
-  },
-  {
-    'path': '/admin/complaint',
-    'icon': Icons.newspaper_rounded,
-    'text': 'Complaints',
-  },
-  {
-    'path': '/admin/regulation',
-    'icon': Icons.topic_rounded,
-    'text': 'Regulations',
-  },
-];

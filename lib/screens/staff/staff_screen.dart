@@ -3,24 +3,26 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_admin/base/common_variables.dart';
 import 'package:lift_admin/base/component/search_field.dart';
+import 'package:lift_admin/data/dto/staff_dto.dart';
 import 'package:lift_admin/data/model/user.dart';
 import 'package:lift_admin/data/service.dart';
 import 'package:lift_admin/screens/account/components/add_edit_user_form.dart';
+import 'package:lift_admin/screens/staff/components/add_edit_staff_form.dart';
 import 'package:localstorage/localstorage.dart';
 
-class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+class StaffScreen extends StatefulWidget {
+  const StaffScreen({super.key});
 
   @override
-  State<AccountScreen> createState() => _AccountScreenState();
+  State<StaffScreen> createState() => _StaffScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _StaffScreenState extends State<StaffScreen> {
   final _searchController = TextEditingController();
   //final _maxRow = 99;
   int _selectedRow = -1;
   // ignore: non_constant_identifier_names
-  late List<User> _UserRows;
+  late List<StaffDto> _UserRows;
   //final _paginationController = TextEditingController(text: "1");
   // Future<void> _loadUsersOfPageIndex(int pageIndex) async {
   //   String searchText = _searchController.text.toLowerCase();
@@ -45,26 +47,28 @@ class _AccountScreenState extends State<AccountScreen> {
     */
     await Future.delayed(kTabScrollDuration);
     //_UserRows = await queryUser(numberRowIgnore: 0);
-    _UserRows = await queryAllUser();
+    _UserRows =
+        await queryStaffWithHubId(hubId: localStorage.getItem('hubId')!);
   }
-  // Future<void> _logicAddUser() async {
-  //   User? newUser = await showDialog(
-  //     context: context,
-  //     builder: (ctx) => const AddEditUserForm(),
-  //   );
 
-  //   if (newUser != null) {
-  //     setState(() {
-  //       _UserRows.add(newUser);
-  //     });
-  //   }
-  // }
+  Future<void> _logicAddStaff() async {
+    StaffDto? newUser = await showDialog(
+      context: context,
+      builder: (ctx) => const AddEditStaffForm(),
+    );
 
-  Future<void> _logicEditUser() async {
+    if (newUser != null) {
+      setState(() {
+        _UserRows.add(newUser);
+      });
+    }
+  }
+
+  Future<void> _logicEditStaff() async {
     String? message = await showDialog(
       context: context,
-      builder: (ctx) => AddEditUserForm(
-        editUser: _UserRows[_selectedRow],
+      builder: (ctx) => AddEditStaffForm(
+        editStaff: _UserRows[_selectedRow],
       ),
     );
 
@@ -74,7 +78,7 @@ class _AccountScreenState extends State<AccountScreen> {
     }
   }
 
-  Future<void> _logicDeleteUser(BuildContext ctx) async {
+  Future<void> _logicDeleteStaff(BuildContext ctx) async {
     var deleteUserName = _UserRows[_selectedRow].name;
 
     /* Xóa dòng dữ liệu*/
@@ -137,31 +141,31 @@ class _AccountScreenState extends State<AccountScreen> {
                   Row(
                     children: [
                       const Text(
-                        'User',
+                        'Staffs',
                         style: TextStyle(
                             fontSize: 36, fontWeight: FontWeight.w900),
                       ),
                       const Spacer(),
-                      // FilledButton(
-                      //   onPressed: _logicAddUser,
-                      //   style: FilledButton.styleFrom(
-                      //     padding: const EdgeInsets.all(20),
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(8),
-                      //     ),
-                      //     backgroundColor: primaryColor,
-                      //   ),
-                      //   child: const Text(
-                      //     'Add User',
-                      //     style: TextStyle(
-                      //         fontSize: 14,
-                      //         fontWeight: FontWeight.bold,
-                      //         color: Colors.white),
-                      //   ),
-                      // ),
-                      // const Gap(20),
+                      FilledButton(
+                        onPressed: _logicAddStaff,
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.all(20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: primaryColor,
+                        ),
+                        child: const Text(
+                          'Add Staff',
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ),
+                      const Gap(20),
                       FilledButton.icon(
-                        onPressed: _selectedRow == -1 ? null : _logicEditUser,
+                        onPressed: _selectedRow == -1 ? null : _logicEditStaff,
                         style: FilledButton.styleFrom(
                           padding: const EdgeInsets.all(20),
                           shape: RoundedRectangleBorder(
@@ -207,7 +211,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                         child: const Text('Cancel'),
                                       ),
                                       FilledButton(
-                                        onPressed: () => _logicDeleteUser(ctx),
+                                        onPressed: () => _logicDeleteStaff(ctx),
                                         child: const Text('Yes'),
                                       ),
                                     ],
@@ -262,7 +266,8 @@ class _AccountScreenState extends State<AccountScreen> {
                       controller: _searchController,
                       onSearch: (value) async {
                         if (_searchController.text == value) {
-                          final newUsers = await searchAllUser(value);
+                          final newUsers = await searchAllStaffByHubId(
+                              value, localStorage.getItem('hubId')!);
                           setState(() {
                             _UserRows = newUsers;
                             _selectedRow = -1;
@@ -295,7 +300,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             width: double.infinity,
                             child: const Text(
-                              'Accounts list',
+                              'Staffs list',
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
@@ -309,10 +314,6 @@ class _AccountScreenState extends State<AccountScreen> {
                             ),
                             child: Row(
                               children: [
-                                SizedBox(
-                                  width: 80,
-                                  child: Text('No', style: cellTextStyle),
-                                ),
                                 Expanded(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -326,8 +327,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 15,
                                     ),
-                                    child:
-                                        Text('User name', style: cellTextStyle),
+                                    child: Text('Name', style: cellTextStyle),
                                   ),
                                 ),
                                 Expanded(
@@ -335,7 +335,16 @@ class _AccountScreenState extends State<AccountScreen> {
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 15,
                                     ),
-                                    child: Text('Role', style: cellTextStyle),
+                                    child: Text('Gender', style: cellTextStyle),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                    ),
+                                    child: Text('Motorcycle Capacity',
+                                        style: cellTextStyle),
                                   ),
                                 ),
                               ],
@@ -365,17 +374,11 @@ class _AccountScreenState extends State<AccountScreen> {
                                             setState(() {
                                               _selectedRow = index;
                                             });
-                                            _logicEditUser();
+                                            _logicEditStaff();
                                           },
                                           child: Row(
                                             children: [
                                               const Gap(30),
-                                              SizedBox(
-                                                width: 80,
-                                                child: Text(
-                                                  (index + 1).toString(),
-                                                ),
-                                              ),
                                               Expanded(
                                                 child: Padding(
                                                   padding: const EdgeInsets
@@ -395,7 +398,18 @@ class _AccountScreenState extends State<AccountScreen> {
                                                     horizontal: 15,
                                                   ),
                                                   child: Text(
-                                                    _UserRows[index].name,
+                                                    _UserRows[index].name!,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    horizontal: 15,
+                                                  ),
+                                                  child: Text(
+                                                    _UserRows[index].gender!,
                                                   ),
                                                 ),
                                               ),
@@ -408,7 +422,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                                   child: Row(
                                                     children: [
                                                       Text(
-                                                        _UserRows[index].role,
+                                                        _UserRows[index]
+                                                            .motorcycleCapacity
+                                                            .toString(),
                                                       ),
                                                       const Spacer(),
                                                       if (_selectedRow == index)

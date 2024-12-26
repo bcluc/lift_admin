@@ -3,24 +3,26 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lift_admin/base/common_variables.dart';
 import 'package:lift_admin/base/component/search_field.dart';
+import 'package:lift_admin/data/dto/order_dto.dart';
 import 'package:lift_admin/data/model/user.dart';
 import 'package:lift_admin/data/service.dart';
 import 'package:lift_admin/screens/account/components/add_edit_user_form.dart';
+import 'package:lift_admin/screens/order_process/components/detail_order_form.dart';
 import 'package:localstorage/localstorage.dart';
 
-class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+class OrderScreen extends StatefulWidget {
+  const OrderScreen({super.key});
 
   @override
-  State<AccountScreen> createState() => _AccountScreenState();
+  State<OrderScreen> createState() => _OrderScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _OrderScreenState extends State<OrderScreen> {
   final _searchController = TextEditingController();
   //final _maxRow = 99;
   int _selectedRow = -1;
   // ignore: non_constant_identifier_names
-  late List<User> _UserRows;
+  late List<OrderDto> _OrderRows;
   //final _paginationController = TextEditingController(text: "1");
   // Future<void> _loadUsersOfPageIndex(int pageIndex) async {
   //   String searchText = _searchController.text.toLowerCase();
@@ -37,34 +39,23 @@ class _AccountScreenState extends State<AccountScreen> {
   //   });
   // }
 
-  late final Future<void> _futureRecentUsers = _getRecentUsers();
-  Future<void> _getRecentUsers() async {
+  late final Future<void> _futureRecentOrders = _getRecentOrders();
+  Future<void> _getRecentOrders() async {
     /* 
     Delay 1 khoảng bằng thời gian animation của TabController 
     Tạo chuyển động mượt mà 
     */
     await Future.delayed(kTabScrollDuration);
     //_UserRows = await queryUser(numberRowIgnore: 0);
-    _UserRows = await queryAllUser();
+    _OrderRows =
+        await queryOrderWithHubId(hubId: localStorage.getItem('hubId')!);
   }
-  // Future<void> _logicAddUser() async {
-  //   User? newUser = await showDialog(
-  //     context: context,
-  //     builder: (ctx) => const AddEditUserForm(),
-  //   );
-
-  //   if (newUser != null) {
-  //     setState(() {
-  //       _UserRows.add(newUser);
-  //     });
-  //   }
-  // }
 
   Future<void> _logicEditUser() async {
     String? message = await showDialog(
       context: context,
-      builder: (ctx) => AddEditUserForm(
-        editUser: _UserRows[_selectedRow],
+      builder: (ctx) => DetailOrderForm(
+        detailOrder: _OrderRows[_selectedRow],
       ),
     );
 
@@ -75,14 +66,14 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> _logicDeleteUser(BuildContext ctx) async {
-    var deleteUserName = _UserRows[_selectedRow].name;
+    var deleteUserName = _OrderRows[_selectedRow].id;
 
     /* Xóa dòng dữ liệu*/
-    await deleteUser(_UserRows[_selectedRow].id!);
+    await deleteUser(_OrderRows[_selectedRow].id!);
 
     // print('totalPage = $totalPages');
 
-    _UserRows.removeAt(_selectedRow);
+    _OrderRows.removeAt(_selectedRow);
     _selectedRow = -1;
     setState(() {});
 
@@ -122,7 +113,7 @@ class _AccountScreenState extends State<AccountScreen> {
     return Scaffold(
       backgroundColor: baseBgColor,
       body: FutureBuilder(
-          future: _futureRecentUsers,
+          future: _futureRecentOrders,
           builder: (ctx, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -137,7 +128,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   Row(
                     children: [
                       const Text(
-                        'User',
+                        'Orders',
                         style: TextStyle(
                             fontSize: 36, fontWeight: FontWeight.w900),
                       ),
@@ -171,12 +162,12 @@ class _AccountScreenState extends State<AccountScreen> {
                               _selectedRow == -1 ? baseBgColor : primaryColor,
                         ),
                         icon: Icon(
-                          Icons.edit,
+                          Icons.info,
                           color:
                               _selectedRow == -1 ? borderColor : Colors.white,
                         ),
                         label: Text(
-                          'Edit',
+                          'Detail',
                           style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -195,7 +186,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                   builder: (ctx) => AlertDialog(
                                     title: const Text('Confirm'),
                                     content: Text(
-                                        'Do you want to delete User ${_UserRows[_selectedRow].name}?'),
+                                        'Do you want to delete Order ${_OrderRows[_selectedRow].id}?'),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -214,7 +205,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                   ),
                                 );
 
-                                if (_selectedRow >= _UserRows.length) {
+                                if (_selectedRow >= _OrderRows.length) {
                                   _selectedRow = -1;
                                 }
                               },
@@ -262,9 +253,10 @@ class _AccountScreenState extends State<AccountScreen> {
                       controller: _searchController,
                       onSearch: (value) async {
                         if (_searchController.text == value) {
-                          final newUsers = await searchAllUser(value);
+                          final newOrders = await searchAllOrderByHubId(
+                              value, localStorage.getItem('hubId')!);
                           setState(() {
-                            _UserRows = newUsers;
+                            _OrderRows = newOrders;
                             _selectedRow = -1;
                           });
                         }
@@ -292,16 +284,6 @@ class _AccountScreenState extends State<AccountScreen> {
                       child: Column(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            width: double.infinity,
-                            child: const Text(
-                              'Accounts list',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          const Gap(30),
-                          Container(
                             color: neutralColor,
                             padding: const EdgeInsets.symmetric(
                               vertical: 15,
@@ -309,10 +291,6 @@ class _AccountScreenState extends State<AccountScreen> {
                             ),
                             child: Row(
                               children: [
-                                SizedBox(
-                                  width: 80,
-                                  child: Text('No', style: cellTextStyle),
-                                ),
                                 Expanded(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -326,8 +304,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 15,
                                     ),
-                                    child:
-                                        Text('User name', style: cellTextStyle),
+                                    child: Text('Status', style: cellTextStyle),
                                   ),
                                 ),
                                 Expanded(
@@ -335,7 +312,17 @@ class _AccountScreenState extends State<AccountScreen> {
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 15,
                                     ),
-                                    child: Text('Role', style: cellTextStyle),
+                                    child: Text('Destination',
+                                        style: cellTextStyle),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 15,
+                                    ),
+                                    child: Text('ShipmentType',
+                                        style: cellTextStyle),
                                   ),
                                 ),
                               ],
@@ -344,7 +331,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           Expanded(
                             child: ListView(
                               children: List.generate(
-                                _UserRows.length,
+                                _OrderRows.length,
                                 (index) {
                                   return Column(
                                     children: [
@@ -370,10 +357,16 @@ class _AccountScreenState extends State<AccountScreen> {
                                           child: Row(
                                             children: [
                                               const Gap(30),
-                                              SizedBox(
-                                                width: 80,
-                                                child: Text(
-                                                  (index + 1).toString(),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                    vertical: 15,
+                                                    horizontal: 15,
+                                                  ),
+                                                  child: Text(
+                                                    _OrderRows[index].id!,
+                                                  ),
                                                 ),
                                               ),
                                               Expanded(
@@ -384,7 +377,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                                     horizontal: 15,
                                                   ),
                                                   child: Text(
-                                                    _UserRows[index].id!,
+                                                    _OrderRows[index]
+                                                        .deliveryInfo!
+                                                        .status!,
                                                   ),
                                                 ),
                                               ),
@@ -395,7 +390,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                                     horizontal: 15,
                                                   ),
                                                   child: Text(
-                                                    _UserRows[index].name,
+                                                    _OrderRows[index]
+                                                        .receiverInfo!
+                                                        .address!,
                                                   ),
                                                 ),
                                               ),
@@ -408,7 +405,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                                   child: Row(
                                                     children: [
                                                       Text(
-                                                        _UserRows[index].role,
+                                                        _OrderRows[index]
+                                                            .deliveryInfo!
+                                                            .shipmentType!,
                                                       ),
                                                       const Spacer(),
                                                       if (_selectedRow == index)
@@ -428,7 +427,7 @@ class _AccountScreenState extends State<AccountScreen> {
                                           ),
                                         ),
                                       ),
-                                      if (index < _UserRows.length - 1)
+                                      if (index < _OrderRows.length - 1)
                                         const Divider(
                                           height: 0,
                                         ),

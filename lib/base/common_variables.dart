@@ -17,6 +17,8 @@ const borderColor = Color(0xFF9CA3AF);
 
 const labelColor = Color(0xFFD1D5DB);
 
+const sectionColor = Color(0xFFF0F0F1);
+
 const neutralColor = Color(0xFFF3F4F6);
 
 const disabledColor = Color.fromARGB(255, 178, 178, 178);

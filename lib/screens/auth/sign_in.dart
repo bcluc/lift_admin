@@ -1,7 +1,6 @@
 // import 'dart:convert';
 // import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gotrue/gotrue.dart';
@@ -164,20 +163,20 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      SvgPicture.asset(
-                        Assets.logoImg,
-                        width: 50,
-                        fit: BoxFit.cover,
-                      ),
-                      const Spacer(),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     SvgPicture.asset(
+                  //       Assets.logoImg,
+                  //       width: 50,
+                  //       fit: BoxFit.cover,
+                  //     ),
+                  //     const Spacer(),
+                  //   ],
+                  // ),
                   Expanded(
                     child: Center(
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.4,
+                        width: MediaQuery.of(context).size.width * 0.8,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +244,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             //     ),
                             //   ),
                             // ),
-                            const SizedBox(height: 20),
+                            // const SizedBox(height: 20),
                             // ignore: unnecessary_null_comparison
                             if (_errorText != null)
                               Align(
@@ -254,7 +253,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   style: errorTextStyle(context),
                                 ),
                               ),
-                            const SizedBox(height: 12),
+                            // const SizedBox(height: 12),
                             Align(
                               child: _isProcessing
                                   ? const SizedBox(
