@@ -52,8 +52,8 @@ class _HubDetailState extends State<HubDetail> {
 
     // print(message);
     if (message == "success") {
-      final newOrderRows =
-          await queryOrderWithStatusByHubId(status: 'pending', hubId: hubId);
+      List<OrderDto> newOrderRows = [];
+      // await queryOrderWithStatusByHubId(status: 'pending', hubId: hubId);
 
       final newDeliverRows =
           await queryDeliverWithStatusByHubId(status: 'pending', hubId: hubId);

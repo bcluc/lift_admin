@@ -766,7 +766,7 @@ Future<List<DeliveryDto>> queryDeliverWithStatusByHubId({
 Future<int> assignOrderByHubId({required String hubId}) async {
   try {
     final response = await http.post(
-      Uri.parse('$url/assign'),
+      Uri.parse('https://waseminarcnpm2.azurewebsites.net/protected/assign'),
       headers: headers,
       body: jsonEncode({
         'hubId': hubId,
